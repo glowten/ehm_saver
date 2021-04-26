@@ -269,4 +269,4 @@ if __name__ == '__main__':
             logging.warning("EHM Window not found")
 
         # save every 30 mins
-        time.sleep(10)
+        time.sleep(60*30)
