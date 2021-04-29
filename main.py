@@ -3,6 +3,7 @@ import time
 import logging
 from PIL import ImageGrab, ImageChops
 import subprocess
+
 """
 DISCLAIMER: only works on 1440x900 and if the ehm window is not moving around during save
 """
@@ -178,8 +179,7 @@ def click(x, y, wait_extra=False):
     win32api.mouse_event(0x0004, 0, 0)
     time.sleep(1)
     if wait_extra:
-        time.sleep(1)
-
+        time.sleep(2)
 
 def enum_return(hwnd, _):
     global ehmWindow
@@ -195,6 +195,7 @@ def enum_return(hwnd, _):
 # def unyeet_ethernet():
 #     subprocess.run(ethernet_command + 'enabled')
 
+
 if __name__ == '__main__':
     logging.basicConfig(
         format='%(asctime)s %(levelname)-8s %(message)s',
@@ -205,6 +206,8 @@ if __name__ == '__main__':
     first_time = True
     save_as = True
     num_rolls = 4
+    num_failures_in_a_row = 0
+    max_failures = 4
     while True:
         logging.info("Attempting save")
 
@@ -231,7 +234,7 @@ if __name__ == '__main__':
                 click(right - 365, top + 48)
             else:
                 # check to see if save is available by comparing screenshots
-                orig = ImageGrab.grab(bbox=(left + 100, top + 5, right - 5, bottom - 5))
+                orig = ImageGrab.grab(bbox=(left + 100, top + 5, right - 500, bottom - 5))
 
                 # save as button
                 click(right - 365, top + 48 + 22, wait_extra=True)
@@ -260,13 +263,21 @@ if __name__ == '__main__':
                     # overwriting save
                     if i >= num_rolls:
                         click(left + 787, top + 523)
+
+                    num_failures_in_a_row = 0
                 else:
                     logging.warning("Save button unclickable")
                     # home button
                     click(left + 120, top + 15)
+                    num_failures_in_a_row += 1
+                    if num_failures_in_a_row == max_failures:
+                        subprocess.Popen(['python', 'bot.py'])
 
         else:
             logging.warning("EHM Window not found")
 
-        # save every 30 mins
-        time.sleep(60*30)
+        # save every 15 mins
+        time.sleep(60*15)
+        # time.sleep(10)
+
+        # TODO: maybe periodically hit where the "no" and "don't save" buttons are
