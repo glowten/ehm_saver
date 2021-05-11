@@ -261,9 +261,14 @@ if __name__ == '__main__':
                     # click near end of text box
                     click(left + 938, top + 754)
 
-                    # overwriting save
-                    if i >= num_rolls:
-                        click(left + 787, top + 523)
+                    # try clicking overwriting save button after save just in case, otherwise don't wait and click yes
+                    if i <= num_rolls:
+                        time.sleep(10)
+                    click(left + 787, top + 523)
+
+                    time.sleep(10)
+                    # home button
+                    click(left + 120, top + 15)
 
                     num_failures_in_a_row = 0
                 else:
