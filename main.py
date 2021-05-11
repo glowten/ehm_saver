@@ -208,6 +208,7 @@ if __name__ == '__main__':
     num_rolls = 4
     num_failures_in_a_row = 0
     max_failures = 4
+    press_ok_tolerance = 2
     while True:
         logging.info("Attempting save")
 
@@ -267,9 +268,14 @@ if __name__ == '__main__':
                     num_failures_in_a_row = 0
                 else:
                     logging.warning("Save button unclickable")
+                    num_failures_in_a_row += 1
+                    if num_failures_in_a_row >= press_ok_tolerance:
+                        # ok button for cant save
+                        click(left + 900, top + 522)
+
                     # home button
                     click(left + 120, top + 15)
-                    num_failures_in_a_row += 1
+
                     if num_failures_in_a_row == max_failures:
                         subprocess.Popen(['python', 'bot.py'])
 
