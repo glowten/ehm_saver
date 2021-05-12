@@ -210,85 +210,89 @@ if __name__ == '__main__':
     max_failures = 4
     press_ok_tolerance = 2
     while True:
-        logging.info("Attempting save")
+        try:
+            logging.info("Attempting save")
 
-        # minimize and re-open
-        windows = win32gui.EnumWindows(enum_return, '')
-        if not ehmWindow is None:
-            # minimize
-            win32gui.ShowWindow(ehmWindow, 6)
-            # restore
-            win32gui.ShowWindow(ehmWindow, 9)
-            # get window rect coords
-            left, top, right, bottom = win32gui.GetWindowRect(ehmWindow)
+            # minimize and re-open
+            windows = win32gui.EnumWindows(enum_return, '')
+            if not ehmWindow is None:
+                # minimize
+                win32gui.ShowWindow(ehmWindow, 6)
+                # restore
+                win32gui.ShowWindow(ehmWindow, 9)
+                # get window rect coords
+                left, top, right, bottom = win32gui.GetWindowRect(ehmWindow)
 
-            top += 25
+                top += 25
 
-            # home button
-            click(left + 120, top + 15)
+                # home button
+                click(left + 120, top + 15)
 
-            # options button
-            click(right - 305, top + 15)
+                # options button
+                click(right - 305, top + 15)
 
-            if not save_as:
-                # save button
-                click(right - 365, top + 48)
-            else:
-                # check to see if save is available by comparing screenshots
-                orig = ImageGrab.grab(bbox=(left + 100, top + 5, right - 500, bottom - 5))
-
-                # save as button
-                click(right - 365, top + 48 + 22, wait_extra=True)
-
-                new = ImageGrab.grab(bbox=(left + 100, top + 5, right - 500, bottom - 5))
-
-                if ImageChops.difference(orig, new).getbbox() is not None:
-
-                    i += 1
-
-                    save_addon = f'-{i % num_rolls}'
-
-                    # click near end of text box
-                    click(left + 1090, top + 185)
-
-                    # if first time, don't delete
-                    if not first_time:
-                        type('backspace', 'backspace')
-                    else:
-                        first_time = False
-
-                    type(*list(save_addon))
-                    # click near end of text box
-                    click(left + 938, top + 754)
-
-                    # try clicking overwriting save button after save just in case, otherwise don't wait and click yes
-                    if i <= num_rolls:
-                        time.sleep(10)
-                    click(left + 787, top + 523)
-
-                    time.sleep(10)
-                    # home button
-                    click(left + 120, top + 15)
-
-                    num_failures_in_a_row = 0
+                if not save_as:
+                    # save button
+                    click(right - 365, top + 48)
                 else:
-                    logging.warning("Save button unclickable")
-                    num_failures_in_a_row += 1
-                    if num_failures_in_a_row >= press_ok_tolerance:
-                        # ok button for cant save
-                        click(left + 900, top + 522)
+                    # check to see if save is available by comparing screenshots
+                    orig = ImageGrab.grab(bbox=(left + 100, top + 5, right - 500, bottom - 5))
 
-                    # home button
-                    click(left + 120, top + 15)
+                    # save as button
+                    click(right - 365, top + 48 + 22, wait_extra=True)
 
-                    if num_failures_in_a_row == max_failures:
-                        subprocess.Popen(['python', 'bot.py'])
+                    new = ImageGrab.grab(bbox=(left + 100, top + 5, right - 500, bottom - 5))
 
-        else:
-            logging.warning("EHM Window not found")
+                    if ImageChops.difference(orig, new).getbbox() is not None:
 
-        # save every 15 mins
-        time.sleep(60*15)
-        # time.sleep(10)
+                        i += 1
+
+                        save_addon = f'-{i % num_rolls}'
+
+                        # click near end of text box
+                        click(left + 1090, top + 185)
+
+                        # if first time, don't delete
+                        if not first_time:
+                            type('backspace', 'backspace')
+                        else:
+                            first_time = False
+
+                        type(*list(save_addon))
+                        # click near end of text box
+                        click(left + 938, top + 754)
+
+                        # try clicking overwriting save button after save just in case, otherwise don't wait and click yes
+                        if i <= num_rolls:
+                            time.sleep(10)
+                        click(left + 787, top + 523)
+
+                        time.sleep(10)
+                        # home button
+                        click(left + 120, top + 15)
+
+                        num_failures_in_a_row = 0
+                    else:
+                        logging.warning("Save button unclickable")
+                        num_failures_in_a_row += 1
+                        if num_failures_in_a_row >= press_ok_tolerance:
+                            # ok button for cant save
+                            click(left + 900, top + 522)
+
+                        # home button
+                        click(left + 120, top + 15)
+
+                        if num_failures_in_a_row == max_failures:
+                            subprocess.Popen(['python', 'bot.py'])
+
+            else:
+                logging.warning("EHM Window not found")
+
+            # save every 15 mins
+            time.sleep(60*15)
+            # time.sleep(10)
+        except Exception as e:
+            logging.error(e)
+            subprocess.Popen(['python', 'bot.py'])
 
         # TODO: maybe periodically hit where the "no" and "don't save" buttons are
