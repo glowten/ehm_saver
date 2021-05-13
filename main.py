@@ -207,8 +207,10 @@ if __name__ == '__main__':
     save_as = True
     num_rolls = 4
     num_failures_in_a_row = 0
+    num_errors = 0
     max_failures = 4
     press_ok_tolerance = 2
+
     while True:
         try:
             logging.info("Attempting save")
@@ -293,6 +295,9 @@ if __name__ == '__main__':
             # time.sleep(10)
         except Exception as e:
             logging.error(e)
-            subprocess.Popen(['python', 'bot.py'])
+            num_errors += 1
+            if num_errors <= 1:
+                subprocess.Popen(['python', 'bot.py'])
+            time.sleep(60*15)
 
         # TODO: maybe periodically hit where the "no" and "don't save" buttons are
