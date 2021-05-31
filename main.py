@@ -284,8 +284,8 @@ if __name__ == '__main__':
                         # home button
                         click(left + 120, top + 15)
 
-                        if num_failures_in_a_row == max_failures:
-                            subprocess.Popen(['python', 'bot.py'])
+                        if num_failures_in_a_row >= max_failures:
+                            subprocess.Popen(['python', 'bot.py', '--fail_times', str(num_failures_in_a_row)])
 
             else:
                 logging.warning("EHM Window not found")
@@ -297,7 +297,7 @@ if __name__ == '__main__':
             logging.error(e)
             num_errors += 1
             if num_errors <= 1:
-                subprocess.Popen(['python', 'bot.py'])
+                subprocess.Popen(['python', 'bot.py', '--crashed'])
             time.sleep(60*15)
 
         # TODO: maybe periodically hit where the "no" and "don't save" buttons are
