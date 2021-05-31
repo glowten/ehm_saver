@@ -172,6 +172,7 @@ ehmWindow = None
 
 
 def click(x, y, wait_extra=False):
+    time.sleep(0.1)
     win32api.SetCursorPos((x, y))
     time.sleep(0.1)
     win32api.mouse_event(0x0002, 0, 0)
