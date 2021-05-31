@@ -4,7 +4,7 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--fail_times", type=int, help="number of times it's failed")
+parser.add_argument("--fail_times", type=int, default=0, help="number of times it's failed")
 parser.add_argument("--crash", action="store_true", help="crashed")
 args = parser.parse_args()
 
